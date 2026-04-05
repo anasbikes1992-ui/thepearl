@@ -50,9 +50,15 @@ Laravel 11 API for PearlHub 2.0 using modular monolith boundaries.
 - `POST /escrow/payouts/queue`
 - `POST /escrow/payouts/{payout}/settle`
 - `GET /escrow/reconciliation/summary`
+- `POST /escrow/{escrow}/signals`
 - `POST /concierge/agentic-chat`
+- `POST /concierge/convert`
 - `POST /voice/transcribe`
 - `POST /voice/concierge`
+- `POST /bundles/compose`
+- `GET /trust/score/{user}`
+- `GET /providers/os/dashboard`
+- `GET /market-playbooks?city={city}&vertical={vertical}`
 - `POST /social/follow`
 - `POST /social/unfollow`
 - `GET /livestreams`

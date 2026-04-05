@@ -73,6 +73,16 @@
 - Tenant model/schema for multi-tenancy readiness completed
 - Platform event recorder service integrated into booking, dispute, payout, and webhook flows
 
+## Phase 12 - Conversion and Trust Intelligence
+
+- Dynamic pricing upgraded with demand, seasonality, weather, local events, and provider-score context
+- Smart escrow automation implemented with objective completion signal ingestion and guarded auto-release
+- Cross-vertical bundle composer endpoint implemented for conversion-focused package offers
+- Concierge-to-conversion service implemented to turn user intent into bundle-ready checkout flows
+- Trust graph scoring endpoint implemented with risk bands and signal breakdown
+- Provider operating dashboard endpoint implemented with actionable CRM/performance/automation hints
+- City + vertical market playbook endpoint and config dataset implemented
+
 ## Mobile Architecture Completion
 
 - Riverpod provider/repository layer added for customer, provider, and admin app entry screens
