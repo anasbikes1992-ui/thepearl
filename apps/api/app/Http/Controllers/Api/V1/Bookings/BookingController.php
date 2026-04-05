@@ -11,6 +11,7 @@ use App\Models\EscrowTransaction;
 use App\Models\Listing\Listing;
 use App\Services\EscrowCalculator;
 use App\Services\Finance\CommissionService;
+use App\Services\Platform\PlatformEventRecorder;
 use Illuminate\Http\JsonResponse;
 
 class BookingController extends Controller
@@ -18,7 +19,8 @@ class BookingController extends Controller
     public function store(
         StoreBookingRequest $request,
         CommissionService $commissionService,
-        EscrowCalculator $escrowCalculator
+        EscrowCalculator $escrowCalculator,
+        PlatformEventRecorder $recorder
     ): JsonResponse {
         $payload = $request->validated();
 
@@ -60,13 +62,25 @@ class BookingController extends Controller
             'auto_release_at' => now()->addHours(48),
         ]);
 
+        $recorder->record('booking', $booking->id, 'booking.created', [
+            'listing_id' => $listing->id,
+            'customer_id' => $booking->customer_id,
+            'provider_id' => $booking->provider_id,
+            'total_amount' => $booking->total_amount,
+        ]);
+
+        $recorder->record('escrow_transaction', $escrow->id, 'escrow.held', [
+            'booking_id' => $booking->id,
+            'gross_amount' => $escrow->gross_amount,
+        ]);
+
         return response()->json([
             'booking' => $booking,
             'escrow' => $escrow,
         ], 201);
     }
 
-    public function complete(Booking $booking): JsonResponse
+    public function complete(Booking $booking, PlatformEventRecorder $recorder): JsonResponse
     {
         $booking->update(['status' => BookingStatus::Completed->value]);
 
@@ -77,6 +91,10 @@ class BookingController extends Controller
                 'released_at' => now(),
             ]);
         }
+
+        $recorder->record('booking', $booking->id, 'booking.completed', [
+            'provider_id' => $booking->provider_id,
+        ]);
 
         return response()->json([
             'booking' => $booking->fresh(),

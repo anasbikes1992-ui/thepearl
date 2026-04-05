@@ -1,23 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CustomerHomeScreen extends StatelessWidget {
+import '../../../application/providers/customer_home_providers.dart';
+
+class CustomerHomeScreen extends ConsumerWidget {
   const CustomerHomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cards = ref.watch(customerHomeCardsProvider);
+
     return Scaffold(
       appBar: AppBar(title: const Text('PearlHub Customer')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: <Widget>[
-          Card(child: ListTile(title: Text('Concierge'), subtitle: Text('Plan a cross-vertical booking'))),
-          Card(child: ListTile(title: Text('My Escrow Orders'), subtitle: Text('Track holds and releases'))),
-          Card(child: ListTile(title: Text('PearlPoints'), subtitle: Text('View loyalty balance and rewards'))),
-          Card(child: ListTile(title: Text('Livestream Deals'), subtitle: Text('Join live shopping sessions and checkout instantly'))),
-          Card(child: ListTile(title: Text('Voice Booking'), subtitle: Text('Use Sinhala, Tamil, or English voice to search and book'))),
-          Card(child: ListTile(title: Text('Resale Marketplace'), subtitle: Text('Browse sustainable second-life premium inventory'))),
-          Card(child: ListTile(title: Text('Pearl Academy'), subtitle: Text('Learn travel, booking, and service quality best practices'))),
-        ],
+      body: cards.when(
+        data: (items) => ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            for (final item in items)
+              Card(
+                child: ListTile(
+                  title: Text(item.title),
+                  subtitle: Text(item.subtitle),
+                ),
+              ),
+          ],
+        ),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, _) => Center(child: Text('Failed to load dashboard: $error')),
       ),
     );
   }

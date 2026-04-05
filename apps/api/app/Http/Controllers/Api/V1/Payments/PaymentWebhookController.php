@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Payments;
 
+use App\Jobs\ProcessPaymentWebhookJob;
 use App\Http\Controllers\Controller;
 use App\Models\Payments\PaymentWebhookEvent;
 use Illuminate\Http\JsonResponse;
@@ -38,6 +39,10 @@ class PaymentWebhookController extends Controller
                 'processed_at' => now(),
             ]
         );
+
+        if ($event->wasRecentlyCreated) {
+            ProcessPaymentWebhookJob::dispatch($event->id);
+        }
 
         return response()->json([
             'accepted' => true,

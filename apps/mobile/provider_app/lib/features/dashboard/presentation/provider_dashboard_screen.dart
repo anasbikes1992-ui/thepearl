@@ -1,19 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ProviderDashboardScreen extends StatelessWidget {
+import '../../../application/providers/provider_dashboard_providers.dart';
+
+class ProviderDashboardScreen extends ConsumerWidget {
   const ProviderDashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cards = ref.watch(providerDashboardCardsProvider);
+
     return Scaffold(
       appBar: AppBar(title: const Text('PearlHub Provider')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: const <Widget>[
-          Card(child: ListTile(title: Text('Listings Moderation'), subtitle: Text('Draft to publish workflow'))),
-          Card(child: ListTile(title: Text('Bookings Queue'), subtitle: Text('Upcoming and active orders'))),
-          Card(child: ListTile(title: Text('Payouts'), subtitle: Text('Escrow release settlements'))),
-        ],
+      body: cards.when(
+        data: (items) => ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            for (final item in items)
+              Card(
+                child: ListTile(
+                  title: Text(item['title'] ?? ''),
+                  subtitle: Text(item['subtitle'] ?? ''),
+                ),
+              ),
+          ],
+        ),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, _) => Center(child: Text('Failed to load provider dashboard: $error')),
       ),
     );
   }

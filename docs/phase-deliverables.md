@@ -45,6 +45,7 @@
 - Dispute open and resolution service/controller foundations completed
 - Payout queueing and settlement service/controller foundations completed
 - Escrow reconciliation summary endpoint completed
+- Auto-release, payout settlement, and payment webhook processing jobs completed
 
 ## Phase 8 - AI and Voice Commerce
 
@@ -70,14 +71,19 @@
 - GraphQL placeholder endpoint completed
 - Platform event ledger schema completed
 - Tenant model/schema for multi-tenancy readiness completed
+- Platform event recorder service integrated into booking, dispute, payout, and webhook flows
+
+## Mobile Architecture Completion
+
+- Riverpod provider/repository layer added for customer, provider, and admin app entry screens
+- Shared Dart SDK expanded with typed concierge response and additional API helpers
+- Customer, provider, and admin app bootstraps moved under ProviderScope
 
 ## Remaining for Production Cutover
 
 - Complete Laravel provider/middleware/exception wiring against real installed framework dependencies
-- Implement payment gateway business-side webhook processing after capture/idempotency
 - Add queue jobs, outbox pattern, and reconciliation workers
 - Implement complete Filament forms/tables/actions
-- Complete mobile data layer (repositories, Riverpod providers)
 - Implement livestream/WebRTC provider integration and moderation jobs
 - Implement AR/VR asset pipeline and device capability fallbacks
 - Implement SL-UDI live integration and fallback strategy
