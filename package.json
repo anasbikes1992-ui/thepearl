@@ -1,0 +1,21 @@
+{
+  "name": "pearlhub-2",
+  "private": true,
+  "version": "0.1.0",
+  "description": "PearlHub 2.0 monorepo",
+  "packageManager": "pnpm@10.12.1",
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "dev:web": "pnpm --filter @pearlhub/web dev",
+    "dev:api": "php -S localhost:8000 -t apps/api/public",
+    "dev:stack": "docker compose -f infra/docker/docker-compose.yml up -d",
+    "test:web:e2e": "pnpm --filter @pearlhub/web test:e2e"
+  },
+  "devDependencies": {
+    "turbo": "^2.1.3"
+  }
+}
