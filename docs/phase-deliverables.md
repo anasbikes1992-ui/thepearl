@@ -83,6 +83,14 @@
 - Provider operating dashboard endpoint implemented with actionable CRM/performance/automation hints
 - City + vertical market playbook endpoint and config dataset implemented
 
+## Phase 13 - Admin Revenue and SEO Controls
+
+- Admin control plane endpoints implemented for runtime business controls (commission overrides, referral bonuses, multipliers)
+- Global "God View" analytics endpoint implemented for revenue, forecast, growth, referral, and risk visibility
+- Referral bonus automation integrated into booking completion for first completed referred transactions
+- Loyalty referrals visibility endpoint implemented for self-serve referral earnings tracking
+- Web SEO upgraded with richer metadata, expanded sitemap coverage, and robots route
+
 ## Mobile Architecture Completion
 
 - Riverpod provider/repository layer added for customer, provider, and admin app entry screens

@@ -9,8 +9,11 @@ use App\Http\Requests\Bookings\StoreBookingRequest;
 use App\Models\Booking\Booking;
 use App\Models\EscrowTransaction;
 use App\Models\Listing\Listing;
+use App\Models\User;
 use App\Services\EscrowCalculator;
 use App\Services\Finance\CommissionService;
+use App\Services\Loyalty\PearlPointsService;
+use App\Services\Loyalty\ReferralService;
 use App\Services\Platform\PlatformEventRecorder;
 use Illuminate\Http\JsonResponse;
 
@@ -80,7 +83,12 @@ class BookingController extends Controller
         ], 201);
     }
 
-    public function complete(Booking $booking, PlatformEventRecorder $recorder): JsonResponse
+    public function complete(
+        Booking $booking,
+        PlatformEventRecorder $recorder,
+        ReferralService $referralService,
+        PearlPointsService $pointsService
+    ): JsonResponse
     {
         $booking->update(['status' => BookingStatus::Completed->value]);
 
@@ -96,9 +104,55 @@ class BookingController extends Controller
             'provider_id' => $booking->provider_id,
         ]);
 
+        $this->rewardReferralIfEligible($booking, $referralService, $pointsService, $recorder);
+
         return response()->json([
             'booking' => $booking->fresh(),
             'escrow' => $bookingEscrow?->fresh(),
+        ]);
+    }
+
+    private function rewardReferralIfEligible(
+        Booking $booking,
+        ReferralService $referralService,
+        PearlPointsService $pointsService,
+        PlatformEventRecorder $recorder
+    ): void {
+        $referralCode = (string) ($booking->metadata['referral_code'] ?? '');
+        if ($referralCode === '') {
+            return;
+        }
+
+        $completedCount = Booking::query()
+            ->where('customer_id', $booking->customer_id)
+            ->where('status', BookingStatus::Completed->value)
+            ->count();
+
+        if ($completedCount !== 1) {
+            return;
+        }
+
+        $customer = User::query()->find($booking->customer_id);
+        $referrer = User::query()
+            ->where('referral_code', $referralCode)
+            ->where('id', '!=', $booking->customer_id)
+            ->first();
+
+        if (!$customer || !$referrer) {
+            return;
+        }
+
+        $ledger = $referralService->rewardFirstTransaction($referrer, $customer, (string) $booking->id);
+
+        $pointsService->award($referrer, (int) $ledger->points_awarded_referrer, 'referral_first_transaction_referrer');
+        $pointsService->award($customer, (int) $ledger->points_awarded_referred, 'referral_first_transaction_referred');
+
+        $recorder->record('booking', $booking->id, 'booking.referral_reward_awarded', [
+            'referrer_user_id' => $referrer->id,
+            'referred_user_id' => $customer->id,
+            'points_referrer' => (int) $ledger->points_awarded_referrer,
+            'points_referred' => (int) $ledger->points_awarded_referred,
+            'ledger_id' => $ledger->id,
         ]);
     }
 }

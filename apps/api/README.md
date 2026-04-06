@@ -37,7 +37,11 @@ Laravel 11 API for PearlHub 2.0 using modular monolith boundaries.
 - `POST /pricing/estimate`
 - `POST /concierge/chat`
 - `GET /loyalty/me`
+- `GET /loyalty/referrals`
 - `GET /analytics/overview`
+- `GET /admin/god-view`
+- `GET /admin/controls`
+- `PUT /admin/controls`
 - `GET /providers/{provider}`
 - `GET /providers/{provider}/reviews`
 - `PUT /provider-profile`

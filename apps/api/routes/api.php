@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\Analytics\AnalyticsController;
 use App\Http\Controllers\Api\V1\Academy\AcademyController;
+use App\Http\Controllers\Api\V1\Admin\AdminControlController;
 use App\Http\Controllers\Api\V1\Bookings\BookingController;
 use App\Http\Controllers\Api\V1\Concierge\AgenticConciergeController;
 use App\Http\Controllers\Api\V1\Concierge\ConciergeController;
@@ -80,6 +81,7 @@ Route::prefix('v1')->group(function (): void {
         Route::post('/bundles/compose', [BundleController::class, 'compose']);
 
         Route::get('/loyalty/me', [LoyaltyController::class, 'me']);
+        Route::get('/loyalty/referrals', [LoyaltyController::class, 'referrals']);
         Route::post('/concierge/chat', [ConciergeController::class, 'chat']);
         Route::post('/concierge/agentic-chat', [AgenticConciergeController::class, 'chat']);
         Route::post('/concierge/convert', [ConciergeConversionController::class, 'convert']);
@@ -89,5 +91,9 @@ Route::prefix('v1')->group(function (): void {
         Route::get('/providers/os/dashboard', [ProviderOperatingSystemController::class, 'dashboard']);
 
         Route::get('/analytics/overview', [AnalyticsController::class, 'overview']);
+
+        Route::get('/admin/god-view', [AdminControlController::class, 'godView']);
+        Route::get('/admin/controls', [AdminControlController::class, 'controls']);
+        Route::put('/admin/controls', [AdminControlController::class, 'updateControls']);
     });
 });
